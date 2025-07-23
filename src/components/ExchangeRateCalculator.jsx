@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ResponsiveContainer, ComposedChart } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ResponsiveContainer, ComposedChart } from 'recharts';
 import { Plus, Trash2, Edit3, Save, X, Download, Upload, BarChart3, TrendingUp } from 'lucide-react';
 
 const ExchangeRateCalculator = () => {
@@ -175,7 +175,7 @@ const ExchangeRateCalculator = () => {
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'exchange_data.json';
+        link.download = 'huiji_exchange_data.json';
         link.click();
     };
 
@@ -223,7 +223,7 @@ const ExchangeRateCalculator = () => {
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = 'sample_exchange_data.json';
+        link.download = 'huiji_sample_exchange_data.json';
         link.click();
     };
 
@@ -309,9 +309,9 @@ const ExchangeRateCalculator = () => {
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
                 <div className="max-w-4xl mx-auto">
                     <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                        <h1 className="text-3xl font-bold text-gray-800 mb-6">汇率计算器</h1>
+                        <h1 className="text-3xl font-bold text-gray-800 mb-6">汇记</h1>
                         <div className="mb-8">
-                            <p className="text-lg text-gray-600 mb-4">欢迎使用汇率计算器！</p>
+                            <p className="text-lg text-gray-600 mb-4">欢迎使用汇记！</p>
                             <p className="text-gray-500 mb-6">
                                 请导入您的汇率数据文件开始使用，或加载示例数据进行体验
                             </p>
@@ -376,7 +376,7 @@ const ExchangeRateCalculator = () => {
                 {/* 标题栏 */}
                 <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
                     <div className="flex justify-between items-center">
-                        <h1 className="text-3xl font-bold text-gray-800">汇率计算器</h1>
+                        <h1 className="text-3xl font-bold text-gray-800">汇记</h1>
                         <div className="flex gap-4">
                             {exchangeData.length > 0 && (
                                 <button
