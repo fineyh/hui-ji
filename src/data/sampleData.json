@@ -1,4 +1,6 @@
+
 [
+  { "rate": 4.7131, "amount": 18660, "direction": "cny_to_aud", "note": "交押金" },
   { "rate": 4.6604, "amount": 2688.88, "direction": "cny_to_aud", "note": "初次兑换" },
   { "rate": 4.6445, "amount": 2222.22, "direction": "cny_to_aud", "note": "" },
   { "rate": 4.6428, "amount": 2000, "direction": "cny_to_aud", "note": "" },

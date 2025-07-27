@@ -319,6 +319,7 @@ const ExchangeRateCalculator = () => {
 
     const downloadSampleData = () => {
         const sampleData = [
+            { rate: 4.7131, amount: 18660, direction: 'cny_to_aud', note: '交押金' },
             { rate: 4.6604, amount: 2688.88, direction: 'cny_to_aud', note: '初次兑换' },
             { rate: 4.6445, amount: 2222.22, direction: 'cny_to_aud', note: '学费' },
             { rate: 4.6428, amount: 2000, direction: 'cny_to_aud', note: '生活费' },
@@ -370,6 +371,7 @@ const ExchangeRateCalculator = () => {
 
     const loadSampleData = () => {
         const sampleData = [
+            { rate: 4.7131, amount: 18660, direction: 'cny_to_aud', note: '交押金' },
             { rate: 4.6604, amount: 2688.88, direction: 'cny_to_aud', note: '初次兑换' },
             { rate: 4.6445, amount: 2222.22, direction: 'cny_to_aud', note: '学费' },
             { rate: 4.6428, amount: 2000, direction: 'cny_to_aud', note: '生活费' },
@@ -899,33 +901,6 @@ const ExchangeRateCalculator = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* 总支出数据 */}
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h2 className="text-xl font-semibold text-gray-800 mb-4">总支出数据</h2>
-                            <div className="bg-blue-50 rounded-lg p-4">
-                                <p className="text-gray-700 mb-2">若算上第一次交押金18660澳元，即87946.45人民币（汇率4.7131）</p>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <p>
-                                        <span className="font-medium">总澳元净持有:</span>
-                                        <span className={`font-bold ml-2 ${(statistics.netAmountAud + 18660) >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                      {(statistics.netAmountAud + 18660).toFixed(2)} AUD
-                    </span>
-                                    </p>
-                                    <p>
-                                        <span className="font-medium">总人民币净支出:</span>
-                                        <span className={`font-bold ml-2 ${(statistics.netAmountCny + 87946.45) >= 0 ? 'text-red-600' : 'text-green-600'}`}>
-                      {(statistics.netAmountCny + 87946.45).toFixed(2)} CNY
-                    </span>
-                                    </p>
-                                </div>
-                                <div className="mt-4 text-sm text-gray-600">
-                                    <p>💡 提示：</p>
-                                    <p>• 澳元净持有 = 所有买入澳元 - 所有卖出澳元</p>
-                                    <p>• 人民币净支出 = 买入时支出的人民币 - 卖出时收入的人民币</p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 )}
 
@@ -1287,7 +1262,7 @@ const ExchangeRateCalculator = () => {
                                             </p>
                                             <p>
                                                 <span className="text-gray-600">按最新汇率:</span>
-                                                <span className="font-bold ml-1 text-green-600">{(statistics.netAmountAud * statistics.latestRate).toFixed(2)} CNY</span>
+                                                <span className="font-bold ml-1 text-green-600">{(statistics.netAmountAud * statistics.latestBuyRate).toFixed(2)} CNY</span>
                                             </p>
                                         </div>
                                     </div>
