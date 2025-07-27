@@ -66,11 +66,14 @@ const ExchangeRateCalculator = () => {
         const netAmountCny = totalAmountCnyOut - totalAmountCnyIn;
         const averageRate = netAmountAud > 0 ? netAmountCny / netAmountAud : 0;
 
-        const rates = exchangeData.map(d => d.rate);
-        const latestRate = rates[rates.length - 1];
-        const highestRate = Math.max(...rates);
-        const lowestRate = Math.min(...rates);
-        const previousRate = rates.length > 1 ? rates[rates.length - 2] : null;
+        // 只考虑买入澳元的汇率数据
+        const buyTransactions = exchangeData.filter(item => (item.direction || 'cny_to_aud') === 'cny_to_aud');
+        const buyRates = buyTransactions.map(d => d.rate);
+
+        const latestBuyRate = buyRates.length > 0 ? buyRates[buyRates.length - 1] : 0;
+        const highestBuyRate = buyRates.length > 0 ? Math.max(...buyRates) : 0;
+        const lowestBuyRate = buyRates.length > 0 ? Math.min(...buyRates) : 0;
+        const previousBuyRate = buyRates.length > 1 ? buyRates[buyRates.length - 2] : null;
 
         // 计算本次兑换对平均汇率的影响
         let averageRateChange = null;
@@ -79,12 +82,12 @@ const ExchangeRateCalculator = () => {
             averageRateChange = averageRates[averageRates.length - 1] - previousAverageRate;
         }
 
-        // 计算差异（以2000澳元为基准）
+        // 计算差异（以2000澳元为基准，只基于买入汇率）
         const baseAmount = 2000;
-        const latestCost = latestRate * baseAmount;
-        const previousCost = previousRate ? previousRate * baseAmount : null;
-        const highestCost = highestRate * baseAmount;
-        const lowestCost = lowestRate * baseAmount;
+        const latestBuyCost = latestBuyRate * baseAmount;
+        const previousBuyCost = previousBuyRate ? previousBuyRate * baseAmount : null;
+        const highestBuyCost = highestBuyRate * baseAmount;
+        const lowestBuyCost = lowestBuyRate * baseAmount;
 
         return {
             averageRate,
@@ -94,17 +97,18 @@ const ExchangeRateCalculator = () => {
             totalAmountCnyOut,
             totalAmountCnyIn,
             netAmountCny,
-            latestRate,
-            highestRate,
-            lowestRate,
-            previousRate,
+            latestBuyRate,
+            highestBuyRate,
+            lowestBuyRate,
+            previousBuyRate,
             exchangeCount: exchangeData.length,
+            buyCount: buyTransactions.length,
             averageRates,
             averageRateChange,
             differences: {
-                lastPrevious: previousCost ? latestCost - previousCost : null,
-                lastMax: latestCost - highestCost,
-                lastMin: latestCost - lowestCost
+                lastPrevious: previousBuyCost ? latestBuyCost - previousBuyCost : null,
+                lastMax: latestBuyCost - highestBuyCost,
+                lastMin: latestBuyCost - lowestBuyCost
             }
         };
     }, [exchangeData]);
@@ -838,10 +842,10 @@ const ExchangeRateCalculator = () => {
                             <h2 className="text-xl font-semibold text-gray-800 mb-4">详细分析</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-medium text-gray-700">汇率比较</h3>
+                                    <h3 className="text-lg font-medium text-gray-700">🔵 买入汇率比较</h3>
                                     <div className="space-y-2">
                                         <p>
-                                            <span className="font-medium">最新汇率:</span> {statistics.latestRate.toFixed(4)}
+                                            <span className="font-medium">最新买入汇率:</span> {statistics.latestBuyRate.toFixed(4)}
                                             {statistics.averageRateChange !== null && (
                                                 <span className={`ml-2 text-sm ${statistics.averageRateChange < 0 ? 'text-green-600' : 'text-red-600'}`}>
                           （本次兑换使得平均汇率{statistics.averageRateChange < 0 ? '下降' : '上升'}: {Math.abs(statistics.averageRateChange).toFixed(4)}）
@@ -849,41 +853,48 @@ const ExchangeRateCalculator = () => {
                                             )}
                                         </p>
                                         <p>
-                                            <span className="font-medium">最高汇率:</span> {statistics.highestRate.toFixed(4)}
+                                            <span className="font-medium">最高买入汇率:</span> {statistics.highestBuyRate.toFixed(4)}
                                         </p>
                                         <p>
-                                            <span className="font-medium">最低汇率:</span> {statistics.lowestRate.toFixed(4)}
+                                            <span className="font-medium">最低买入汇率:</span> {statistics.lowestBuyRate.toFixed(4)}
                                         </p>
-                                        {statistics.previousRate && (
+                                        {statistics.previousBuyRate && (
                                             <p>
-                                                <span className="font-medium">前一次汇率:</span> {statistics.previousRate.toFixed(4)}
+                                                <span className="font-medium">前一次买入汇率:</span> {statistics.previousBuyRate.toFixed(4)}
                                             </p>
                                         )}
+                                        <p className="text-sm text-gray-500 mt-2">
+                                            💡 买入次数: {statistics.buyCount} 次 / 总交易: {statistics.exchangeCount} 次
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-medium text-gray-700">成本差异 (以2000澳元为基准)</h3>
+                                    <h3 className="text-lg font-medium text-gray-700">买入成本差异 (以2000澳元为基准)</h3>
                                     <div className="space-y-2">
                                         {statistics.differences.lastPrevious !== null && (
                                             <p>
-                                                比前一次{statistics.differences.lastPrevious < 0 ? '便宜' : '贵'}了:
+                                                比前一次买入{statistics.differences.lastPrevious < 0 ? '便宜' : '贵'}了:
                                                 <span className={`font-bold ml-1 ${statistics.differences.lastPrevious < 0 ? 'text-green-600' : 'text-red-600'}`}>
                           {Math.abs(statistics.differences.lastPrevious).toFixed(2)} CNY
                         </span>
                                             </p>
                                         )}
                                         <p>
-                                            比最高一次{statistics.differences.lastMax < 0 ? '便宜' : '贵'}了:
+                                            比最高买入汇率{statistics.differences.lastMax < 0 ? '便宜' : '贵'}了:
                                             <span className={`font-bold ml-1 ${statistics.differences.lastMax < 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {Math.abs(statistics.differences.lastMax).toFixed(2)} CNY
                       </span>
                                         </p>
                                         <p>
-                                            比最低一次{statistics.differences.lastMin < 0 ? '便宜' : '贵'}了:
+                                            比最低买入汇率{statistics.differences.lastMin < 0 ? '便宜' : '贵'}了:
                                             <span className={`font-bold ml-1 ${statistics.differences.lastMin < 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {Math.abs(statistics.differences.lastMin).toFixed(2)} CNY
                       </span>
                                         </p>
+                                        <div className="mt-3 p-2 bg-blue-50 rounded text-sm text-blue-700">
+                                            <p className="font-medium">📊 分析说明：</p>
+                                            <p>此分析只关注买入澳元的汇率，帮助优化买入时机和成本控制</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
